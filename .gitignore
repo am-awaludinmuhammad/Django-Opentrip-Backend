@@ -1,0 +1,71 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django specific files
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.sql
+*.sqlite3
+db.sqlite3
+
+# Django migrations
+*/migrations/*
+
+# If using Pillow (Python Imaging Library)
+*.thumb
+
+# Media folder (if used for file uploads)
+media/
+
+# Static files (can be handled differently depending on deployment strategy)
+staticfiles/
+static/
+
+# Local development settings
+local_settings.py
+
+# Node.js dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# Virtual environment
+venv/
+ENV/
+env/
+
+# VS Code settings
+.vscode/
+
+# PyCharm settings
+.idea/
+
+# MacOS specific files
+.DS_Store
+
+# Backup files
+*.bak
+*.swp
+
+# Test coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# Profiler data
+.prof
+
+# Sphinx documentation
+docs/_build/
