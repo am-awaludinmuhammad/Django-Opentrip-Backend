@@ -8,6 +8,7 @@ urlpatterns = [
     
     path('api/', include([
         path('accounts/', include('account.urls')),
+        path('trips/', include('trip.urls')),
     ])),
 ]
 
