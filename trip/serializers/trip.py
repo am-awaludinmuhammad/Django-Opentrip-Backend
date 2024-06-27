@@ -20,14 +20,14 @@ class TripExcludeSerializer(CustomSerializerErrorMessagesMixin, serializers.Mode
         fields = ['id','item']
 
 class TripItinerarySerializer(CustomSerializerErrorMessagesMixin, serializers.ModelSerializer):
-    def validate_activities(self, value):
-        if 'name' not in value:
-            raise serializers.ValidationError("data JSON harus memiliki key 'name'")
-        return value
-    
     class Meta:
         model = TripItinerary
-        fields = ['id','day','time_start','time_end','activities']
+        fields = ['id','day','time','activity']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.required = True
 
 class TripGallerySerializer(CustomSerializerErrorMessagesMixin, serializers.ModelSerializer):
     image = serializers.ImageField(
@@ -44,8 +44,9 @@ class TripGallerySerializer(CustomSerializerErrorMessagesMixin, serializers.Mode
 class TripSerializer(CustomSerializerErrorMessagesMixin, serializers.ModelSerializer):
     trip_includes = TripIncludeSerializer(many=True, required=True)
     trip_excludes = TripExcludeSerializer(many=True, required=True)
-    trip_galleries = TripGallerySerializer(many=True, required=True)
+    trip_galleries = TripGallerySerializer(many=True, required=False)
     trip_itineraries = TripItinerarySerializer(many=True, required=True)
+    slug = serializers.SlugField(read_only=True)
     regency_id = serializers.PrimaryKeyRelatedField(
         queryset=Regency.objects.all(),
         source='regency',

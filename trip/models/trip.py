@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.text import slugify
 from general.models import TimeStampedModel
 
 class Trip(TimeStampedModel):
@@ -16,9 +17,24 @@ class Trip(TimeStampedModel):
     max_member = models.IntegerField()
     rate_avg = models.DecimalField(max_digits=4, decimal_places=2, default=0)
     regency = models.ForeignKey('trip.Regency', on_delete=models.CASCADE, related_name='trips')
+    slug = models.SlugField(unique=True,null=True,default=None)
 
     class Meta:
         db_table = 'trips'
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = self.generate_unique_slug()
+        super().save(*args, **kwargs)
+
+    def generate_unique_slug(self):
+        base_slug = slugify(self.name)
+        slug = base_slug
+        n = 1
+        while Trip.objects.filter(slug=slug).exists():
+            slug = f"{base_slug}-{n}"
+            n += 1
+        return slug
 
     def __str__(self):
         return self.name
@@ -45,9 +61,8 @@ class TripExclude(TimeStampedModel):
 
 class TripItinerary(TimeStampedModel):
     day = models.IntegerField()
-    time_start = models.TimeField()
-    time_end = models.TimeField()
-    activities = models.JSONField()
+    time = models.TimeField(blank=False, default=None)
+    activity = models.CharField(default=None)
     trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name='trip_itineraries')
 
     class Meta:
