@@ -8,7 +8,7 @@ from account.views import UserViewSet
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
-router.register('', UserViewSet, basename='users')
+router.register('', UserViewSet)
 
 urlpatterns = [
     path('token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
