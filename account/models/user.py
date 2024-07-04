@@ -1,6 +1,7 @@
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
+import re
 from django.db import models
 from general.models import TimeStampedModel
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
 
 class UserManager(UserManager):
     def _create_user(self, name, email, password, **extra_fields):
@@ -49,3 +50,15 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampedModel):
 
     def __str__(self):
         return f"{self.email}"
+
+    def normalize_phone_number(self, phone):
+        # Normalize the phone number to the format +62xx
+        if phone.startswith('0'):
+            phone = '62' + phone[1:]
+        # Remove any non-digit characters
+        phone = re.sub(r'\D', '', phone)
+        return phone
+
+    def save(self, *args, **kwargs):
+        self.phone = self.normalize_phone_number(self.phone)
+        super(User, self).save(*args, **kwargs)
