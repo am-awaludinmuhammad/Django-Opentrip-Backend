@@ -46,6 +46,7 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampedModel):
     REQUIRED_FIELDS = []
 
     class Meta:
+        ordering = ['created_at']
         db_table = 'users'
 
     def __str__(self):
