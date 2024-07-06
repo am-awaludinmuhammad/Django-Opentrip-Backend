@@ -62,12 +62,18 @@ class TripSerializer(CustomSerializerErrorMessagesMixin, serializers.ModelSerial
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        request =  self.context['request']
+        request = self.context.get('request', None)
 
         # set fields optional for patch
         if request and request.method in ['PATCH']:
             for field in self.fields:
                 self.fields[field].required = False
+
+    def validate_thumbnail(self, value):
+        max_size = 2 * 1024 * 1024 # max 2 MB 
+        if value and value.size > max_size:
+            raise serializers.ValidationError(f"Ukuran file tidak boleh lebih dari {max_size / (1024 * 1024)} MB.")
+        return value
 
     def validate(self, data):
         total_day = data.get('total_day', None)
