@@ -20,6 +20,7 @@ class Trip(TimeStampedModel):
     slug = models.SlugField(unique=True,null=True,default=None)
 
     class Meta:
+        ordering = ['created_at']
         db_table = 'trips'
 
     def save(self, *args, **kwargs):
@@ -44,6 +45,7 @@ class TripInclude(TimeStampedModel):
     trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name='trip_includes')
     
     class Meta:
+        ordering = ['created_at']
         db_table = 'trip_includes'
 
     def __str__(self):
@@ -54,6 +56,7 @@ class TripExclude(TimeStampedModel):
     trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name='trip_excludes')
 
     class Meta:
+        ordering = ['created_at']
         db_table = 'trip_excludes'
 
     def __str__(self):
@@ -66,6 +69,7 @@ class TripItinerary(TimeStampedModel):
     trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name='trip_itineraries')
 
     class Meta:
+        ordering = ['created_at']
         db_table = 'trip_itineraries'
 
     def __str__(self):
@@ -78,6 +82,7 @@ class TripGallery(TimeStampedModel):
     trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name='trip_galleries')
     
     class Meta:
+        ordering = ['created_at']
         db_table = 'trip_galleries'
         
     def __str__(self):

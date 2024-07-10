@@ -282,3 +282,56 @@ class TripTest(TestCase):
         url = reverse('trip-detail', args=[self.trip['id']])
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def test_fetch_trip_normal_user(self):
+        url = reverse('trip-list')
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.user_token}')
+        response = self.client.get(url)
+        rendered_response = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('data', rendered_response)
+        self.assertIn('count', rendered_response['data'])
+        self.assertIn('results', rendered_response['data'])
+        self.assertEqual(rendered_response['data']['count'], 1)
+
+    def test_fetch_inactive_trip_normal_user(self):
+        # set trip to inactive
+        url = reverse('trip-detail', args=[self.trip['id']])
+        data = {'is_active': False}
+        response = self.client.patch(url, data, format='multipart')
+        rendered_response = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('id', rendered_response['data'])
+        trip = Trip.objects.get(pk=rendered_response['data']['id'])
+        self.assertEqual(trip.is_active, False)
+
+        url = reverse('trip-list')
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.user_token}')
+        response = self.client.get(url)
+        rendered_response = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('data', rendered_response)
+        self.assertIn('count', rendered_response['data'])
+        self.assertIn('results', rendered_response['data'])
+        self.assertEqual(rendered_response['data']['count'], 0)
+
+    def test_detail_inactive_trip_normal_user(self):
+        # set trip to inactive
+        url = reverse('trip-detail', args=[self.trip['id']])
+        data = {'is_active': False}
+        response = self.client.patch(url, data, format='multipart')
+        rendered_response = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('id', rendered_response['data'])
+        trip = Trip.objects.get(pk=rendered_response['data']['id'])
+        self.assertEqual(trip.is_active, False)
+
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.user_token}')
+        response = self.client.get(url)
+        rendered_response = json.loads(response.content)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertIn('errors', rendered_response)

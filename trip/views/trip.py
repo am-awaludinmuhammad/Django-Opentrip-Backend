@@ -16,16 +16,25 @@ class TripViewSet(viewsets.ModelViewSet):
     filterset_class = TripFilter
     search_fields = ['name','regency__name','regency__province__name']
 
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_authenticated and (user.is_staff or user.is_superuser):
+            return Trip.objects.all()  # Return all trips for admin or superuser
+        else:
+            return Trip.objects.filter(is_active=True)
+
     # optional get trip object by pk or by slug
     def get_object(self):
         lookup_value = self.kwargs.get('pk')
+        queryset =  self.get_queryset()
+
         try:
-            return Trip.objects.get(pk=int(lookup_value))
+            return queryset.get(pk=int(lookup_value))
         except (Trip.DoesNotExist, ValueError):
             pass
 
         try:
-            return Trip.objects.get(slug=lookup_value)
+            return queryset.get(slug=lookup_value)
         except Trip.DoesNotExist:
             raise NotFound(detail="No Trip matches the given query.", code=404)
     
