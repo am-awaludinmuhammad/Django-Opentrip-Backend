@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'general',
     'account',
     'trip',
+    'order',
 ]
 
 AUTH_USER_MODEL = 'account.User'

@@ -10,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        request =  self.context['request']
+        request = self.context.get('request')
 
         # set fields optional for patch
         if request and request.method in ['PATCH']:
