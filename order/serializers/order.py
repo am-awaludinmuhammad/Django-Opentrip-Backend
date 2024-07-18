@@ -24,6 +24,7 @@ class OrderSerializer(serializers.ModelSerializer):
     )
     trip = BasicTripReadSerializer(read_only=True)
     user = UserSerializer(read_only=True)
+    payment = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
@@ -37,8 +38,15 @@ class OrderSerializer(serializers.ModelSerializer):
             'updated_at',
             'order_number',
             'gross_amount',
+            'payment',
         ]
         depth=1
+
+    def get_payment(self, obj):
+        if hasattr(obj, 'payment'):
+            from order.serializers import PaymentSerializer
+            return PaymentSerializer(obj.payment).data
+        return None
 
     def create(self, validated_data):
         request = self.context.get('request')

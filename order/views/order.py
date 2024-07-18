@@ -2,10 +2,10 @@ from order.models import Order
 from rest_framework import permissions
 from account.utils import user_is_admin
 from rest_framework import viewsets, mixins
-from general.pagination import CustomPageNumberPagination
-from order.serializers import OrderSerializer, OrderDetailSerialzier
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
+from general.pagination import CustomPageNumberPagination
+from django_filters.rest_framework import DjangoFilterBackend
+from order.serializers import OrderSerializer, OrderDetailSerialzier
 
 class OrderViewSet(
     mixins.ListModelMixin,
@@ -13,7 +13,7 @@ class OrderViewSet(
     mixins.RetrieveModelMixin,
     viewsets.GenericViewSet):
 
-    queryset = Order.objects.all()
+    queryset = Order.objects.prefetch_related('payment').all()
     serializer_class = OrderSerializer
     pagination_class = CustomPageNumberPagination
     permission_classes = [permissions.IsAuthenticated]
