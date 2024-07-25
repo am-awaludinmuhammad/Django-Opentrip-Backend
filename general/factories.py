@@ -2,7 +2,7 @@ import factory
 import datetime
 from account.models import User
 from general.models import Bank
-from order.models import Order, Payment
+from order.models import Order, Payment, Review
 from factory.django import DjangoModelFactory
 from trip.models import (Province, 
                          Regency, 
@@ -80,3 +80,10 @@ class PaymentFactory(DjangoModelFactory):
     order = factory.SubFactory(OrderFactory)
     bank = factory.SubFactory(BankFactory)
     confirmed_at = None
+
+class ReviewFactory(DjangoModelFactory):
+    class Meta:
+        model = Review
+
+    order = factory.SubFactory(OrderFactory)
+    
