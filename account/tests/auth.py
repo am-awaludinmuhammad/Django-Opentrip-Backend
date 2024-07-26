@@ -1,9 +1,10 @@
-from rest_framework_simplejwt.tokens import RefreshToken
 import json
+from django.core import mail
 from account.models import User
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase,APIClient
+from rest_framework_simplejwt.tokens import RefreshToken
 
 class AuthTest(APITestCase):
     def setUp(self):
@@ -35,6 +36,8 @@ class AuthTest(APITestCase):
 
         user = User.objects.get(pk=rendered_response['data']['id'])
         self.assertEqual(user.name, self.user_data['name'])
+
+        self.assertEqual(len(mail.outbox), 1)
 
     def test_register_user_bad_request(self):
         url = reverse('user-list')

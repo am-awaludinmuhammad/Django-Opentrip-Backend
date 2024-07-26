@@ -38,6 +38,7 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampedModel):
     is_staff = models.BooleanField(default=False)
 
     last_login = models.DateTimeField(null=True)
+    is_email_verified = models.BooleanField(default=False)
 
     objects = UserManager()
 
