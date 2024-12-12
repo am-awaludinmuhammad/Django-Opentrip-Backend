@@ -90,6 +90,11 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
+**7. Seed provinces, regencies, and districts data:**
+```bash
+python manage.py seed_locations
+```
+
 ## API Documentation
 The API documentation is available at /api/schema/swagger-ui/ or /api/schema/redoc/
 
