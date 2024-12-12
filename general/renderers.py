@@ -20,7 +20,7 @@ class CustomJSONRenderer(JSONRenderer):
                 response_data = {
                         'errors': data
                     }
-            elif response.status_code > 500:
+            elif response.status_code >= 500:
                 response_data = {
                     'message': "Internal Server Error"
                 }
