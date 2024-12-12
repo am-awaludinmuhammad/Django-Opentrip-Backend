@@ -14,28 +14,29 @@ class UserSerializer(serializers.ModelSerializer):
 
         # set fields optional for patch
         if request and request.method in ['PATCH']:
-            for field in self.fields:
-                self.fields[field].required = False
-    
+            self.fields['password'].required = False
+            self.fields['password_confirm'].required = False
+
     class Meta:
         model = User
         fields = ('id', 'email','name','phone','avatar','is_active','password', 'password_confirm')
 
     def validate_phone(self, value):
         if value and not re.match(r'^62\d{8,15}$', value):
-            raise serializers.ValidationError("Invalid phone number format. Must start with 62.")
+            raise serializers.ValidationError("Invalid phone number. It must start with '62' and contain between 8 and 15 digits.")
         return value
 
     def validate(self, data):
         password = data.get('password', None)
         password_confirm = data.get('password_confirm', None)
         email = data.get('email', None)
+        request = self.context.get('request')
         
         if password and password != password_confirm:
-            raise serializers.ValidationError('Password confirmation does not match.')
+            raise serializers.ValidationError({"password": ["Password confirmation does not match."]})
         
-        if email and User.objects.filter(email=data['email']).exists():
-            raise serializers.ValidationError('Email address is already taken.')
+        if email and request.method == 'POST' and User.objects.filter(email=data['email']).exists():
+            raise serializers.ValidationError({"email": ["Email address is already taken."]})
 
         return data
     
